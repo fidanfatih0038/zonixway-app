@@ -37,7 +37,7 @@
         .tarot-back { background: linear-gradient(135deg, #1a0033, #4a0072); color: var(--gold); font-size: 20px; }
         .tarot-front { background: rgba(123, 31, 162, 0.8); transform: rotateY(180deg); color: #fff; font-size: 9px; padding: 5px; text-align: center; }
         .main-btn { background: linear-gradient(135deg, #4a0072, #7b1fa2); color: #fff; border: 1px solid var(--gold); padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; letter-spacing: 1px; font-family: 'Cinzel'; }
-        #sonucAlani { display: none; margin-top: 25px; padding: 25px; background: rgba(0,0,0,0.8); border-left: 4px solid var(--gold); border-radius: 16px; line-height: 1.7; color: #f0e6ff; text-align: justify; }
+        #sonucAlani { display: none; margin-top: 25px; padding: 25px; background: rgba(0,0,0,0.8); border-left: 4px solid var(--gold); border-radius: 16px; line-height: 1.7; color: #f0e6ff; text-align: justify; white-space: pre-wrap; }
         
         .image-box { margin-top: 15px; border: 2px dashed rgba(255, 215, 0, 0.3); border-radius: 16px; min-height: 180px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 15px; background: rgba(0,0,0,0.2); }
         .gallery-item { position: relative; width: 80px; height: 80px; }
@@ -49,7 +49,6 @@
         .history-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 5px 0 15px 0; }
         .history-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; width: 0; transition: width 1s; }
         #surpriz-kutu { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent); border: 1px solid var(--gold); border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .side-icon { position: fixed; top: 50%; transform: translateY(-50%); width: 280px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 10px var(--gold)); }
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
         
         .remember-container { display: flex; align-items: center; gap: 8px; margin-top: 15px; padding-left: 5px; }
@@ -103,9 +102,6 @@
         </div>
     </div>
 <script>
-    // --- GÜVENLİK AYARI ---
-    // API anahtarını buraya yazmıyoruz, server.js üzerinden güvenli şekilde çekiyoruz.
-
     let activeIdx = 0; let selectedImages = []; let tarotStack = []; let zodiacSelected = "";
     const menuItems = ["Kahve Falı", "El Falı", "Tarot", "Burçlar", "Rüyalar", "Numeroloji"];
     const signs = ["Koç","Boğa","İkizler","Yengeç","Aslan","Başak","Terazi","Akrep","Yay","Oğlak","Kova","Balık"];
@@ -211,44 +207,45 @@
 
         loader.style.display = 'block'; document.getElementById('sonucAlani').style.display = 'none';
 
+        // --- GEMINI PROMPT HAZIRLIĞI ---
         let identity = ""; let task = "";
         let details = `
         KURALLAR:
         1. CÜMLELERİNİ ASLA YARIDA BIRAKMA.
-        2. Falcı Teyze gibi konuş: "Bak şurada...", "Yavrum..." de.
-        3. Ortalama 250 kelime yaz.
-        4. En sonunda mutlaka "Hadi kendine iyi bak, yine beklerim" gibi bir cümle ile BİTİR.
+        2. Samimi bir Falcı Teyze tonu kullan: "Yavrum", "Görüyorum ki", "Bak şurada" gibi ifadeler ekle.
+        3. Ortalama 200-300 kelime yaz. Akıcı bir paragraf yapısı kur.
+        4. En sonunda "Kaderin aydınlık olsun, yine beklerim." diyerek bitir.
         `;
 
         if(activeIdx === 0) {
-            identity = "Sen Falcı Teyze'sisin.";
-            task = `GÖREVİN: Kahve fincanını ${n} (${age} yaş) için yorumla.`;
+            identity = "Sen mahallenin en iyi Falcı Teyzesisin.";
+            task = `GÖREVİN: Gönderilen kahve fincanı fotoğraflarını ${n} (${age} yaş) için detaylıca yorumla.`;
         } else if(activeIdx === 1) {
-            identity = "Sen El Falı Üstadısın.";
-            task = `GÖREVİN: El çizgilerini ${n} için yorumla.`;
+            identity = "Sen El Falı Uzmanısın.";
+            task = `GÖREVİN: El fotoğrafındaki çizgileri ${n} için yorumla.`;
         } else if(activeIdx === 2) {
-            identity = "Sen Tarot Okuyucusu'sun.";
-            task = `GÖREVİN: Kartlar: ${tarotStack.join(' + ')}. ${n} için yorumla.`;
+            identity = "Sen Tarot Kartı Yorumcususun.";
+            task = `GÖREVİN: Seçilen kartlar: ${tarotStack.join(', ')}. Bu kartların ${n}'in hayatına etkisini anlat.`;
         } else if(activeIdx === 3) {
-            identity = "Sen Astrologsun.";
-            task = `GÖREVİN: ${zodiacSelected} burcu yorumu yap.`;
+            identity = "Sen Bilge bir Astrologsun.";
+            task = `GÖREVİN: ${zodiacSelected} burcu için ${n}'e özel günlük burç yorumu yap.`;
         } else if(activeIdx === 4) {
             identity = "Sen Rüya Tabircisisin.";
-            task = `GÖREVİN: Şu rüyayı yorumla: "${document.getElementById('dreamData').value}".`;
+            task = `GÖREVİN: Kullanıcının rüyasını yorumla: "${document.getElementById('dreamData').value}".`;
         } else {
-            identity = "Sen Numerologsun.";
-            task = `GÖREVİN: ${d} doğumlu ${n} için numerolojik analiz yap.`;
+            identity = "Sen Numeroloji Uzmanısın.";
+            task = `GÖREVİN: Doğum tarihi ${d} olan ${n} için numerolojik kader analizi yap.`;
         }
 
-        const promptText = `KİMLİK: ${identity}\nKULLANICI: ${n}\n${task}\n${details}`;
+        const fullPrompt = `KİMLİK: ${identity}\nKULLANICI: ${n}\n${task}\n${details}`;
 
         try {
-            // ARTIK DOĞRUDAN KENDİ SUNUCUNA GİDİYORUZ
+            // SUNUCUYA (server.js) GİDEN GÜVENLİ İSTEK
             const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    message: promptText,
+                    message: fullPrompt,
                     images: (activeIdx < 2) ? selectedImages : []
                 })
             });
@@ -256,11 +253,16 @@
             const data = await response.json();
             loader.style.display = 'none';
 
-            if (data.error) { showMysticAlert("Fincan soğumuş, enerjini alamadım."); return; }
+            if (data.error) {
+                console.error("Sunucu hatası:", data.error);
+                showMysticAlert("Fincan soğumuş, enerjini alamadım. Tekrar dene.");
+                return;
+            }
             
             let finalText = data.text.trim();
+            // Kesilme kontrolü
             if (!/[.!?]$/.test(finalText)) {
-                 finalText += "... (Neyse kuzum, enerjim bu kadar yetti. Hadi kendine iyi bak.)";
+                 finalText += "... Enerjim bu kadarına yetti yavrum, her şey gönlünce olsun.";
             }
 
             document.getElementById('sonucText').innerText = finalText;
@@ -270,7 +272,7 @@
         } catch (e) { 
             console.error(e);
             loader.style.display = 'none'; 
-            showMysticAlert("Bağlantı koptu, tekrar dene."); 
+            showMysticAlert("Gaipten bir ses: Bağlantı koptu! Tekrar dene."); 
         }
     }
     
@@ -299,7 +301,14 @@
         else sign = "Balık";
         document.getElementById('astroInfo').innerText="Güneş Burcun: "+sign; 
     }
-    window.onload = () => { loadUserData(); syncPlanets(); updateEnergyBars(); renderMenu(); updateGalleryUI(); const sc=document.getElementById('star-container'); for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.width='2px';s.style.height='2px';s.style.animationDuration=(Math.random()*3+2)+'s';sc.appendChild(s);} setTimeout(()=>{const o=document.getElementById('welcome-overlay');if(o){o.style.opacity='0';setTimeout(()=>o.remove(),800);}},1500); setInterval(()=>{document.getElementById('liveClock').innerText=new Date().toLocaleString('tr-TR');},1000); tarotNames.sort(()=>Math.random()-0.5); };
+    window.onload = () => { 
+        loadUserData(); syncPlanets(); updateEnergyBars(); renderMenu(); updateGalleryUI(); 
+        const sc=document.getElementById('star-container'); 
+        for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.width='2px';s.style.height='2px';s.style.animationDuration=(Math.random()*3+2)+'s';sc.appendChild(s);} 
+        setTimeout(()=>{const o=document.getElementById('welcome-overlay');if(o){o.style.opacity='0';setTimeout(()=>o.remove(),800);}},1500); 
+        setInterval(()=>{document.getElementById('liveClock').innerText=new Date().toLocaleString('tr-TR');},1000); 
+        tarotNames.sort(()=>Math.random()-0.5); 
+    };
 </script>
 </body>
 </html>
