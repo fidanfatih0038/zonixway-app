@@ -3,41 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mystic Oracle v4.0</title> <link rel="icon" href="data:,">
+    <title>Mystic Oracle v4.0 Final</title> 
+    <link rel="icon" href="data:,">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8501135338572495" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #ffd700; --gold-dim: #b8860b; --purple: #9c27b0; --deep-bg: #0a0112; --glass: rgba(10, 5, 20, 0.85); --border: rgba(255, 215, 0, 0.3); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background-color: var(--deep-bg); background-image: radial-gradient(circle at 50% 100%, #2a0a40, #000); color: #e0c3fc; font-family: 'Poppins', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; position: relative; }
+        
         #mystic-alert { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); background: var(--glass); border: 2px solid var(--gold); padding: 25px; border-radius: 20px; z-index: 99999; text-align: center; display: none; opacity: 0; box-shadow: 0 0 50px rgba(0,0,0,1), 0 0 20px var(--purple); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 85%; max-width: 320px; }
         #mystic-alert.show { opacity: 1; transform: translate(-50%, -50%) scale(1); display: block; }
         .alert-btn { margin-top: 20px; background: var(--gold); color: #000; border: none; padding: 10px 25px; border-radius: 15px; font-weight: bold; cursor: pointer; font-family: 'Cinzel'; }
+        
         .online-status { position: fixed; top: 20px; left: 20px; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(0, 255, 204, 0.3); font-size: 11px; color: #00ffcc; z-index: 1000; }
         .online-dot { width: 8px; height: 8px; background: #00ffcc; border-radius: 50%; animation: blinkOnline 1.5s infinite; }
+        @keyframes blinkOnline { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
         #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -3; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0; animation: twinkle ease-in-out infinite; }
+        @keyframes twinkle { 0% { opacity: 0; transform: scale(0.5); } 50% { opacity: 0.8; transform: scale(1.2); } 100% { opacity: 0; transform: scale(0.5); } }
+
         #fog { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://raw.githubusercontent.com/s1mpson-/assets/master/fog.png') repeat; opacity: 0.05; z-index: -2; animation: fogMove 60s linear infinite; pointer-events: none; }
         @keyframes fogMove { 0% { background-position: 0 0; } 100% { background-position: 1000px 0; } }
+
         #welcome-overlay { position: fixed; inset: 0; background: var(--deep-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20000; transition: opacity 1s ease-out; }
         .wizard-gif { font-size: 80px; filter: drop-shadow(0 0 20px var(--gold)); animation: wizardFloat 3s infinite ease-in-out; }
+        @keyframes wizardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
         .container { width: 95%; max-width: 1100px; display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 30px; margin-bottom: 50px; z-index: 10; }
         @media (min-width: 992px) { .container { grid-template-columns: 320px 1fr; } }
+
         .panel { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 30px; position: relative; }
         input, select, textarea { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; margin-top: 5px; }
+        
         .tab-btn { padding: 16px; text-align: left; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ddd; cursor: pointer; border-radius: 12px; margin-bottom: 10px; width: 100%; transition: 0.3s; }
         .tab-btn.active { background: linear-gradient(90deg, #7b1fa2, transparent); border-left: 4px solid var(--gold); color: #fff; }
+
         .grid-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .card-item { background: rgba(255,215,0,0.05); border: 1px solid var(--gold); color: var(--gold); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; font-size: 10px; }
+        .card-item { background: rgba(255,215,0,0.05); border: 1px solid var(--gold); color: var(--gold); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; font-size: 10px; transition: 0.3s; }
         .card-item.selected { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); }
+
         .tarot-card { perspective: 1000px; height: 120px; cursor: pointer; }
         .tarot-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .tarot-card.flipped .tarot-inner { transform: rotateY(180deg); }
         .tarot-front, .tarot-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; flex-direction: column; }
         .tarot-back { background: linear-gradient(135deg, #1a0033, #4a0072); color: var(--gold); font-size: 20px; }
         .tarot-front { background: rgba(123, 31, 162, 0.8); transform: rotateY(180deg); color: #fff; font-size: 9px; padding: 5px; text-align: center; }
-        .main-btn { background: linear-gradient(135deg, #4a0072, #7b1fa2); color: #fff; border: 1px solid var(--gold); padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; letter-spacing: 1px; font-family: 'Cinzel'; }
-        #sonucAlani { display: none; margin-top: 25px; padding: 25px; background: rgba(0,0,0,0.8); border-left: 4px solid var(--gold); border-radius: 16px; line-height: 1.7; color: #f0e6ff; text-align: justify; white-space: pre-wrap; }
+
+        .main-btn { background: linear-gradient(135deg, #4a0072, #7b1fa2); color: #fff; border: 1px solid var(--gold); padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; letter-spacing: 1px; font-family: 'Cinzel'; transition: 0.3s; }
+        .main-btn:active { transform: scale(0.98); }
+
+        #sonucAlani { display: none; margin-top: 25px; padding: 25px; background: rgba(0,0,0,0.8); border-left: 4px solid var(--gold); border-radius: 16px; line-height: 1.7; color: #f0e6ff; text-align: justify; white-space: pre-wrap; font-size: 15px; }
         
         .image-box { margin-top: 15px; border: 2px dashed rgba(255, 215, 0, 0.3); border-radius: 16px; min-height: 180px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 15px; background: rgba(0,0,0,0.2); }
         .gallery-item { position: relative; width: 80px; height: 80px; }
@@ -48,79 +65,133 @@
         .planet-row { display: flex; justify-content: space-between; font-size: 11px; margin-top: 8px; padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .history-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 5px 0 15px 0; }
         .history-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; width: 0; transition: width 1s; }
+        
         #surpriz-kutu { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent); border: 1px solid var(--gold); border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        #surpriz-kutu:hover { background: rgba(255, 215, 0, 0.2); }
         
         .remember-container { display: flex; align-items: center; gap: 8px; margin-top: 15px; padding-left: 5px; }
-        .remember-checkbox { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; margin: 0; }
+        .remember-checkbox { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
         .remember-label { font-size: 11px; color: #ccc; cursor: pointer; user-select: none; }
     </style>
 </head>
 <body>
-    <div id="mystic-alert"><div id="alert-icon" style="font-size: 40px; margin-bottom: 10px;">🔮</div><div id="alert-text"></div><button class="alert-btn" onclick="closeAlert()">ANLADIM</button></div>
+    <div id="mystic-alert">
+        <div id="alert-icon" style="font-size: 40px; margin-bottom: 10px;">🔮</div>
+        <div id="alert-text"></div>
+        <button class="alert-btn" onclick="closeAlert()">ANLADIM</button>
+    </div>
+
     <div class="online-status"><div class="online-dot"></div><span>142 Çevrimiçi Kâhin</span></div>
-    <div id="welcome-overlay"><div class="wizard-gif">🧙✨</div><div style="text-align:center; color:gold; font-family:'Cinzel'; margin-top:20px;">Mystic Oracle'a Hoş Geldin<br><span style="font-size: 14px; opacity: 0.8;">Kaderin Yıldızlarda Saklı...</span></div></div>
-    <div id="star-container"></div><div id="fog"></div>
-    <audio id="bgMusic" loop><source src="https://actions.google.com/sounds/v1/horror/ambient_hum_creepy.ogg" type="audio/ogg"></audio>
+
+    <div id="welcome-overlay">
+        <div class="wizard-gif">🧙✨</div>
+        <div style="text-align:center; color:gold; font-family:'Cinzel'; margin-top:20px;">
+            Mystic Oracle'a Hoş Geldin<br>
+            <span style="font-size: 14px; opacity: 0.8;">Kaderin Yıldızlarda Saklı...</span>
+        </div>
+    </div>
+
+    <div id="star-container"></div>
+    <div id="fog"></div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://actions.google.com/sounds/v1/horror/ambient_hum_creepy.ogg" type="audio/ogg">
+    </audio>
+
     <div id="mainAppContent" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
         <div class="header" style="text-align:center; margin-top:40px; position:relative;">
-            <div class="top-controls" style="position: absolute; right: -50px; top: -10px;"><button onclick="toggleMusic()" style="background:none; border:none; cursor:pointer; font-size:24px;">🎵</button></div>
-            <h1 id="siteMainTitle" style="font-family:'Cinzel'; font-size: clamp(24px, 8vw, 40px); color: gold; margin:0;">MYSTIC ORACLE <span style="font-size:12px; color:white;">v4.0 Final</span></h1>
+            <div class="top-controls" style="position: absolute; right: -50px; top: -10px;">
+                <button onclick="toggleMusic()" style="background:none; border:none; cursor:pointer; font-size:24px;">🎵</button>
+            </div>
+            <h1 style="font-family:'Cinzel'; font-size: clamp(24px, 8vw, 40px); color: gold; margin:0;">MYSTIC ORACLE <span style="font-size:12px; color:white;">v4.0 Final</span></h1>
             <div id="liveClock" style="font-size: 11px; color:gold; margin-top: 5px; opacity:0.7;"></div>
         </div>
+
         <div class="container">
             <div class="panel">
                 <h3 style="color:gold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; margin-top:0;">👤 ANALİZ PROFİLİ</h3>
-                <label style="font-size:10px; color:gold; display:block; margin-top:15px; letter-spacing:1px;">İSMİNİZ *</label><input type="text" id="userName" placeholder="İsim Giriniz">
-                <label style="font-size:10px; color:gold; display:block; margin-top:15px; letter-spacing:1px;">DOĞUM TARİHİ *</label><input type="date" id="dob" onchange="calcAstro()">
+                <label>İSMİNİZ *</label><input type="text" id="userName" placeholder="İsim Giriniz">
+                <label>DOĞUM TARİHİ *</label><input type="date" id="dob" onchange="calcAstro()">
                 
                 <div class="remember-container">
                     <input type="checkbox" id="rememberMe" class="remember-checkbox">
                     <label for="rememberMe" class="remember-label">Beni Hatırla (Bilgilerimi Kaydet)</label>
                 </div>
 
-                <div id="surpriz-kutu" onclick="surprizAc()"><span id="kutu-ikon">🎁</span><div id="kutu-metin" style="font-size: 11px; color: #fff; font-style: italic;">Günün Kader Sandığını Aç...</div></div>
+                <div id="surpriz-kutu" onclick="surprizAc()">
+                    <span id="kutu-ikon">🎁</span>
+                    <div id="kutu-metin" style="font-size: 11px; color: #fff; font-style: italic;">Günün Kader Sandığını Aç...</div>
+                </div>
+
                 <div id="planet-monitor" style="margin-top:20px;"></div>
-                <div style="margin-top:20px;"><div style="font-size: 9px; color: var(--gold);">RUHSAL GÜÇ</div><div class="history-bar-container"><div id="bar-spirit" class="history-bar-fill"></div></div><div style="font-size: 9px; color: var(--gold);">AŞK ENERJİSİ</div><div class="history-bar-container"><div id="bar-love" class="history-bar-fill" style="background: #e91e63;"></div></div></div>
+
+                <div style="margin-top:20px;">
+                    <div style="font-size: 9px; color: var(--gold);">RUHSAL GÜÇ</div>
+                    <div class="history-bar-container"><div id="bar-spirit" class="history-bar-fill"></div></div>
+                    <div style="font-size: 9px; color: var(--gold);">AŞK ENERJİSİ</div>
+                    <div class="history-bar-container"><div id="bar-love" class="history-bar-fill" style="background: #e91e63;"></div></div>
+                </div>
+
                 <div id="astroInfo" style="text-align:center; margin-top:15px; color:gold; font-weight:bold;"></div>
                 <div style="margin-top:25px;" id="menuContainer"></div>
             </div>
+
             <div class="panel">
                 <h2 id="t-active-title" style="margin-top:0; color:gold; font-family:'Cinzel'; text-align:center; font-size:18px;"></h2>
+                
                 <div id="section-photo">
                     <div class="image-box" id="imgPreview">
                         <div class="add-more-btn" onclick="document.getElementById('imgInput').click()">+</div>
                     </div>
                     <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="handleMultipleImages(this)">
                 </div>
+
                 <div id="section-grid" style="display:none;" class="grid-area"></div>
-                <div id="section-dream" style="display:none;"><textarea id="dreamData" rows="6" placeholder="Rüyanı detaylıca fısılda..."></textarea></div>
+                <div id="section-dream" style="display:none;">
+                    <textarea id="dreamData" rows="6" placeholder="Rüyanı detaylıca fısılda..."></textarea>
+                </div>
+
                 <button class="main-btn" onclick="runOracle()">KEHANETİ BAŞLAT</button>
                 <div id="loader" style="display:none; text-align:center; margin-top:20px; color:var(--gold); font-size:14px; font-weight:bold; animation: pulse 1s infinite;">✨ Kaderin Okunuyor...</div>
+                
                 <div id="sonucAlani"><div id="sonucText"></div></div>
             </div>
         </div>
     </div>
+
 <script>
-    let activeIdx = 0; let selectedImages = []; let tarotStack = []; let zodiacSelected = "";
+    let activeIdx = 0; 
+    let selectedImages = []; 
+    let tarotStack = []; 
+    let zodiacSelected = "";
+    
     const menuItems = ["Kahve Falı", "El Falı", "Tarot", "Burçlar", "Rüyalar", "Numeroloji"];
     const signs = ["Koç","Boğa","İkizler","Yengeç","Aslan","Başak","Terazi","Akrep","Yay","Oğlak","Kova","Balık"];
     const tarotNames = ["Ölüm","Aşıklar","Kule","Yıldız","Ay","Güneş","Dünya","Adalet","Büyücü","Ermiş","Şeytan","Aptal"];
-    const surprizler = [{i:"🗝️", n:"Gümüş Anahtar", m:"Fırsat kapıda."}, {i:"🪶", n:"Anka Tüyü", m:"Ruhun yenileniyor."}];
+    const surprizler = [
+        {i:"🗝️", n:"Gümüş Anahtar", m:"Fırsat kapıda."}, 
+        {i:"🪶", n:"Anka Tüyü", m:"Ruhun yenileniyor."},
+        {i:"💎", n:"Mavi Göz", m:"Nazardan korundun."}
+    ];
 
     function renderMenu() {
-        const container = document.getElementById('menuContainer'); container.innerHTML = '';
+        const container = document.getElementById('menuContainer'); 
+        container.innerHTML = '';
         menuItems.forEach((name, i) => {
-            const b = document.createElement('button'); b.className = `tab-btn ${i===activeIdx?'active':''}`;
-            b.innerText = name; b.onclick = () => { 
+            const b = document.createElement('button'); 
+            b.className = `tab-btn ${i===activeIdx?'active':''}`;
+            b.innerText = name; 
+            b.onclick = () => { 
                 activeIdx = i; tarotStack = []; zodiacSelected = ""; selectedImages = [];
-                document.getElementById('sonucAlani').style.display = 'none'; renderMenu();
+                document.getElementById('sonucAlani').style.display = 'none'; 
+                renderMenu();
                 document.getElementById('t-active-title').innerText = name;
                 document.getElementById('section-photo').style.display = (i<2)?"block":"none";
                 document.getElementById('section-grid').style.display = (i===2||i===3)?"grid":"none";
                 document.getElementById('section-dream').style.display = (i===4)?"block":"none";
                 if(i<2) updateGalleryUI();
-                if(i===2) loadGrid('tarot'); if(i===3) loadGrid('signs');
+                if(i===2) loadGrid('tarot'); 
+                if(i===3) loadGrid('signs');
             };
             container.appendChild(b);
             if(i===activeIdx) document.getElementById('t-active-title').innerText = name;
@@ -132,14 +203,23 @@
         if(mode === 'signs') {
             signs.forEach(s => {
                 const el = document.createElement('div'); el.className = 'card-item'; el.innerText = s;
-                el.onclick = () => { document.querySelectorAll('.card-item').forEach(x=>x.classList.remove('selected')); el.classList.add('selected'); zodiacSelected = s; };
+                el.onclick = () => { 
+                    document.querySelectorAll('.card-item').forEach(x=>x.classList.remove('selected')); 
+                    el.classList.add('selected'); 
+                    zodiacSelected = s; 
+                };
                 grid.appendChild(el);
             });
         } else {
             tarotNames.forEach((n, i) => {
                 const el = document.createElement('div'); el.className = 'tarot-card';
                 el.innerHTML = `<div class="tarot-inner"><div class="tarot-back">?</div><div class="tarot-front">${n}</div></div>`;
-                el.onclick = () => { if(tarotStack.length<3 && !el.classList.contains('flipped')) { el.classList.add('flipped'); tarotStack.push(n); } };
+                el.onclick = () => { 
+                    if(tarotStack.length<3 && !el.classList.contains('flipped')) { 
+                        el.classList.add('flipped'); 
+                        tarotStack.push(n); 
+                    } 
+                };
                 grid.appendChild(el);
             });
         }
@@ -148,7 +228,10 @@
     function handleMultipleImages(input) {
         if(input.files[0]){
             const r = new FileReader();
-            r.onload=(e)=>{ selectedImages.push(e.target.result); updateGalleryUI(); };
+            r.onload=(e)=>{ 
+                selectedImages.push(e.target.result); 
+                updateGalleryUI(); 
+            };
             r.readAsDataURL(input.files[0]);
             input.value = "";
         }
@@ -170,78 +253,39 @@
         }
     }
 
-    function saveUserData() {
-        if(document.getElementById('rememberMe').checked) {
-            const data = {
-                name: document.getElementById('userName').value,
-                dob: document.getElementById('dob').value
-            };
-            localStorage.setItem('mysticUser', JSON.stringify(data));
-        } else {
-            localStorage.removeItem('mysticUser');
-        }
-    }
-
-    function loadUserData() {
-        const data = localStorage.getItem('mysticUser');
-        if(data) {
-            const u = JSON.parse(data);
-            document.getElementById('userName').value = u.name || "";
-            document.getElementById('dob').value = u.dob || "";
-            document.getElementById('rememberMe').checked = true;
-            if(u.dob) calcAstro();
-        }
-    }
-
     async function runOracle() {
         const n = document.getElementById('userName').value;
         const d = document.getElementById('dob').value;
-        saveUserData();
+        
+        // Verileri kaydet
+        if(document.getElementById('rememberMe').checked) {
+            localStorage.setItem('mysticUser', JSON.stringify({name: n, dob: d}));
+        } else {
+            localStorage.removeItem('mysticUser');
+        }
 
-        const loader = document.getElementById('loader');
         if(!n || !d) { showMysticAlert("Önce ismini ve doğum tarihini fısılda..."); return; }
+        
         const age = new Date().getFullYear() - new Date(d).getFullYear();
         if(activeIdx < 2 && selectedImages.length === 0) { showMysticAlert("Fotoğraf yükle."); return; }
         if(activeIdx === 2 && tarotStack.length < 3) { showMysticAlert("Lütfen 3 kart seç."); return; }
         if(activeIdx === 3 && !zodiacSelected) { showMysticAlert("Hangi burçtan olduğunu seçmedin."); return; }
 
-        loader.style.display = 'block'; document.getElementById('sonucAlani').style.display = 'none';
+        document.getElementById('loader').style.display = 'block'; 
+        document.getElementById('sonucAlani').style.display = 'none';
 
-        // --- GEMINI PROMPT HAZIRLIĞI ---
-        let identity = ""; let task = "";
-        let details = `
-        KURALLAR:
-        1. CÜMLELERİNİ ASLA YARIDA BIRAKMA.
-        2. Samimi bir Falcı Teyze tonu kullan: "Yavrum", "Görüyorum ki", "Bak şurada" gibi ifadeler ekle.
-        3. Ortalama 200-300 kelime yaz. Akıcı bir paragraf yapısı kur.
-        4. En sonunda "Kaderin aydınlık olsun, yine beklerim." diyerek bitir.
-        `;
+        // PROMPT HAZIRLIĞI
+        let identity = "Sen bilge ve samimi bir Falcı Teyzesin.";
+        let task = `Kullanıcı: ${n}, Yaş: ${age}. Kategori: ${menuItems[activeIdx]}. `;
+        if(activeIdx === 2) task += `Seçilen Tarot Kartları: ${tarotStack.join(', ')}. `;
+        if(activeIdx === 3) task += `Burç: ${zodiacSelected}. `;
+        if(activeIdx === 4) task += `Rüya: ${document.getElementById('dreamData').value}. `;
 
-        if(activeIdx === 0) {
-            identity = "Sen mahallenin en iyi Falcı Teyzesisin.";
-            task = `GÖREVİN: Gönderilen kahve fincanı fotoğraflarını ${n} (${age} yaş) için detaylıca yorumla.`;
-        } else if(activeIdx === 1) {
-            identity = "Sen El Falı Uzmanısın.";
-            task = `GÖREVİN: El fotoğrafındaki çizgileri ${n} için yorumla.`;
-        } else if(activeIdx === 2) {
-            identity = "Sen Tarot Kartı Yorumcususun.";
-            task = `GÖREVİN: Seçilen kartlar: ${tarotStack.join(', ')}. Bu kartların ${n}'in hayatına etkisini anlat.`;
-        } else if(activeIdx === 3) {
-            identity = "Sen Bilge bir Astrologsun.";
-            task = `GÖREVİN: ${zodiacSelected} burcu için ${n}'e özel günlük burç yorumu yap.`;
-        } else if(activeIdx === 4) {
-            identity = "Sen Rüya Tabircisisin.";
-            task = `GÖREVİN: Kullanıcının rüyasını yorumla: "${document.getElementById('dreamData').value}".`;
-        } else {
-            identity = "Sen Numeroloji Uzmanısın.";
-            task = `GÖREVİN: Doğum tarihi ${d} olan ${n} için numerolojik kader analizi yap.`;
-        }
-
-        const fullPrompt = `KİMLİK: ${identity}\nKULLANICI: ${n}\n${task}\n${details}`;
+        const fullPrompt = `${identity}\n${task}\nLütfen samimi, detaylı ve akıcı bir yorum yap.`;
 
         try {
-            // SUNUCUYA (server.js) GİDEN GÜVENLİ İSTEK
-            const response = await fetch("/api/chat", {
+            // ARTIK KENDİ SUNUCUNA BAĞLANIYOR (APK UYUMLU)
+            const response = await fetch("https://zonixway.com/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -251,41 +295,59 @@
             });
 
             const data = await response.json();
-            loader.style.display = 'none';
+            document.getElementById('loader').style.display = 'none';
 
-            if (data.error) {
-                console.error("Sunucu hatası:", data.error);
-                showMysticAlert("Fincan soğumuş, enerjini alamadım. Tekrar dene.");
-                return;
+            if (data.text) {
+                document.getElementById('sonucText').innerText = data.text;
+                document.getElementById('sonucAlani').style.display = 'block';
+                updateEnergyBars();
+            } else {
+                showMysticAlert("Kâhin şu an sustu, tekrar dene.");
             }
-            
-            let finalText = data.text.trim();
-            // Kesilme kontrolü
-            if (!/[.!?]$/.test(finalText)) {
-                 finalText += "... Enerjim bu kadarına yetti yavrum, her şey gönlünce olsun.";
-            }
-
-            document.getElementById('sonucText').innerText = finalText;
-            document.getElementById('sonucAlani').style.display = 'block';
-            updateEnergyBars();
-
         } catch (e) { 
-            console.error(e);
-            loader.style.display = 'none'; 
-            showMysticAlert("Gaipten bir ses: Bağlantı koptu! Tekrar dene."); 
+            document.getElementById('loader').style.display = 'none'; 
+            showMysticAlert("Bağlantı koptu! Sunucunu kontrol et."); 
         }
     }
     
-    function surprizAc() { const n=document.getElementById('userName').value; if(!n){showMysticAlert("İsmini söyle.");return;} const s=surprizler[Math.floor(Math.random()*surprizler.length)]; document.getElementById('kutu-ikon').innerHTML=s.i; document.getElementById('kutu-metin').innerHTML=`<b>${s.n}</b>: ${s.m}`; }
-    function showMysticAlert(t) { document.getElementById('alert-text').innerText=t; const b=document.getElementById('mystic-alert'); b.style.display="block"; setTimeout(()=>b.classList.add('show'),10); }
-    function closeAlert() { document.getElementById('mystic-alert').classList.remove('show'); setTimeout(()=>document.getElementById('mystic-alert').style.display="none",300); }
-    function syncPlanets() { const p=[{n:"Merkür",v:72},{n:"Venüs",v:45},{n:"Mars",v:88},{n:"Jüpiter",v:94}]; document.getElementById('planet-monitor').innerHTML=p.map(x=>`<div class="planet-row"><span>${x.n}</span><span style="color:gold">%${x.v}</span></div>`).join(''); }
-    function updateEnergyBars() { document.getElementById('bar-spirit').style.width=(Math.floor(Math.random()*40)+60)+"%"; document.getElementById('bar-love').style.width=(Math.floor(Math.random()*40)+50)+"%"; }
-    function toggleMusic() { const m=document.getElementById('bgMusic'); m.paused?m.play():m.pause(); }
+    function surprizAc() { 
+        const n=document.getElementById('userName').value; 
+        if(!n){showMysticAlert("İsmini söyle.");return;} 
+        const s=surprizler[Math.floor(Math.random()*surprizler.length)]; 
+        document.getElementById('kutu-ikon').innerHTML=s.i; 
+        document.getElementById('kutu-metin').innerHTML=`<b>${s.n}</b>: ${s.m}`; 
+    }
+
+    function showMysticAlert(t) { 
+        document.getElementById('alert-text').innerText=t; 
+        const b=document.getElementById('mystic-alert'); 
+        b.style.display="block"; 
+        setTimeout(()=>b.classList.add('show'),10); 
+    }
+
+    function closeAlert() { 
+        document.getElementById('mystic-alert').classList.remove('show'); 
+        setTimeout(()=>document.getElementById('mystic-alert').style.display="none",300); 
+    }
+
+    function syncPlanets() { 
+        const p=[{n:"Merkür",v:72},{n:"Venüs",v:45},{n:"Mars",v:88},{n:"Jüpiter",v:94}]; 
+        document.getElementById('planet-monitor').innerHTML=p.map(x=>`<div class="planet-row"><span>${x.n}</span><span style="color:gold">%${x.v}</span></div>`).join(''); 
+    }
+
+    function updateEnergyBars() { 
+        document.getElementById('bar-spirit').style.width=(Math.floor(Math.random()*40)+60)+"%"; 
+        document.getElementById('bar-love').style.width=(Math.floor(Math.random()*40)+50)+"%"; 
+    }
+
+    function toggleMusic() { 
+        const m=document.getElementById('bgMusic'); 
+        m.paused?m.play():m.pause(); 
+    }
+
     function calcAstro() { 
         const d=document.getElementById('dob').value; if(!d)return; 
-        const date = new Date(d);
-        const day = date.getDate(); const month = date.getMonth() + 1;
+        const date = new Date(d); const day = date.getDate(); const month = date.getMonth() + 1;
         let sign = "";
         if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) sign = "Koç";
         else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) sign = "Boğa";
@@ -301,11 +363,41 @@
         else sign = "Balık";
         document.getElementById('astroInfo').innerText="Güneş Burcun: "+sign; 
     }
+
     window.onload = () => { 
-        loadUserData(); syncPlanets(); updateEnergyBars(); renderMenu(); updateGalleryUI(); 
+        const data = localStorage.getItem('mysticUser');
+        if(data) {
+            const u = JSON.parse(data);
+            document.getElementById('userName').value = u.name;
+            document.getElementById('dob').value = u.dob;
+            document.getElementById('rememberMe').checked = true;
+            calcAstro();
+        }
+        
+        syncPlanets(); 
+        updateEnergyBars(); 
+        renderMenu(); 
+        
         const sc=document.getElementById('star-container'); 
-        for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.width='2px';s.style.height='2px';s.style.animationDuration=(Math.random()*3+2)+'s';sc.appendChild(s);} 
-        setTimeout(()=>{const o=document.getElementById('welcome-overlay');if(o){o.style.opacity='0';setTimeout(()=>o.remove(),800);}},1500); 
+        for(let i=0;i<60;i++){
+            const s=document.createElement('div');
+            s.className='star';
+            s.style.left=Math.random()*100+'%';
+            s.style.top=Math.random()*100+'%';
+            s.style.width='2px';
+            s.style.height='2px';
+            s.style.animationDuration=(Math.random()*3+2)+'s';
+            sc.appendChild(s);
+        } 
+        
+        setTimeout(()=>{
+            const o=document.getElementById('welcome-overlay');
+            if(o){
+                o.style.opacity='0';
+                setTimeout(()=>o.remove(),800);
+            }
+        },1500); 
+        
         setInterval(()=>{document.getElementById('liveClock').innerText=new Date().toLocaleString('tr-TR');},1000); 
         tarotNames.sort(()=>Math.random()-0.5); 
     };
