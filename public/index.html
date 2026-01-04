@@ -63,7 +63,7 @@
         .add-more-btn { width: 80px; height: 80px; border: 2px dashed var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--gold); cursor: pointer; background: rgba(255,215,0,0.05); }
 
         .planet-row { display: flex; justify-content: space-between; font-size: 11px; margin-top: 8px; padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .history-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 5px 0 15px 0; }
+        .history-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,1.0); border-radius: 2px; margin: 5px 0 15px 0; }
         .history-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; width: 0; transition: width 1s; }
         
         #surpriz-kutu { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent); border: 1px solid var(--gold); border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
@@ -165,7 +165,8 @@
     let tarotStack = []; 
     let zodiacSelected = "";
     
-    const menuItems = ["Kahve Falı", "El Falı", "Tarot", "Burçlar", "Rüyalar", "Numeroloji"];
+    // El Falı çıkarıldı
+    const menuItems = ["Kahve Falı", "Tarot", "Burçlar", "Rüyalar", "Numeroloji"];
     const signs = ["Koç","Boğa","İkizler","Yengeç","Aslan","Başak","Terazi","Akrep","Yay","Oğlak","Kova","Balık"];
     const tarotNames = ["Ölüm","Aşıklar","Kule","Yıldız","Ay","Güneş","Dünya","Adalet","Büyücü","Ermiş","Şeytan","Aptal"];
     const surprizler = [
@@ -186,12 +187,15 @@
                 document.getElementById('sonucAlani').style.display = 'none'; 
                 renderMenu();
                 document.getElementById('t-active-title').innerText = name;
-                document.getElementById('section-photo').style.display = (i<2)?"block":"none";
-                document.getElementById('section-grid').style.display = (i===2||i===3)?"grid":"none";
-                document.getElementById('section-dream').style.display = (i===4)?"block":"none";
-                if(i<2) updateGalleryUI();
-                if(i===2) loadGrid('tarot'); 
-                if(i===3) loadGrid('signs');
+                
+                // Menü düzenlemeleri (El falı gittiği için indisler kaydı)
+                document.getElementById('section-photo').style.display = (i===0)?"block":"none"; // Sadece Kahve
+                document.getElementById('section-grid').style.display = (i===1||i===2)?"grid":"none"; // Tarot ve Burçlar
+                document.getElementById('section-dream').style.display = (i===3)?"block":"none"; // Rüyalar
+                
+                if(i===0) updateGalleryUI();
+                if(i===1) loadGrid('tarot'); 
+                if(i===2) loadGrid('signs');
             };
             container.appendChild(b);
             if(i===activeIdx) document.getElementById('t-active-title').innerText = name;
@@ -257,7 +261,6 @@
         const n = document.getElementById('userName').value;
         const d = document.getElementById('dob').value;
         
-        // Verileri kaydet
         if(document.getElementById('rememberMe').checked) {
             localStorage.setItem('mysticUser', JSON.stringify({name: n, dob: d}));
         } else {
@@ -267,30 +270,28 @@
         if(!n || !d) { showMysticAlert("Önce ismini ve doğum tarihini fısılda..."); return; }
         
         const age = new Date().getFullYear() - new Date(d).getFullYear();
-        if(activeIdx < 2 && selectedImages.length === 0) { showMysticAlert("Fotoğraf yükle."); return; }
-        if(activeIdx === 2 && tarotStack.length < 3) { showMysticAlert("Lütfen 3 kart seç."); return; }
-        if(activeIdx === 3 && !zodiacSelected) { showMysticAlert("Hangi burçtan olduğunu seçmedin."); return; }
+        if(activeIdx === 0 && selectedImages.length === 0) { showMysticAlert("Fotoğraf yükle."); return; }
+        if(activeIdx === 1 && tarotStack.length < 3) { showMysticAlert("Lütfen 3 kart seç."); return; }
+        if(activeIdx === 2 && !zodiacSelected) { showMysticAlert("Hangi burçtan olduğunu seçmedin."); return; }
 
         document.getElementById('loader').style.display = 'block'; 
         document.getElementById('sonucAlani').style.display = 'none';
 
-        // PROMPT HAZIRLIĞI
         let identity = "Sen bilge ve samimi bir Falcı Teyzesin.";
         let task = `Kullanıcı: ${n}, Yaş: ${age}. Kategori: ${menuItems[activeIdx]}. `;
-        if(activeIdx === 2) task += `Seçilen Tarot Kartları: ${tarotStack.join(', ')}. `;
-        if(activeIdx === 3) task += `Burç: ${zodiacSelected}. `;
-        if(activeIdx === 4) task += `Rüya: ${document.getElementById('dreamData').value}. `;
+        if(activeIdx === 1) task += `Seçilen Tarot Kartları: ${tarotStack.join(', ')}. `;
+        if(activeIdx === 2) task += `Burç: ${zodiacSelected}. `;
+        if(activeIdx === 3) task += `Rüya: ${document.getElementById('dreamData').value}. `;
 
         const fullPrompt = `${identity}\n${task}\nLütfen samimi, detaylı ve akıcı bir yorum yap.`;
 
         try {
-            // ARTIK KENDİ SUNUCUNA BAĞLANIYOR (APK UYUMLU)
             const response = await fetch("https://zonixway.com/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     message: fullPrompt,
-                    images: (activeIdx < 2) ? selectedImages : []
+                    images: (activeIdx === 0) ? selectedImages : []
                 })
             });
 
