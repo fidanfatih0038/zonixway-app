@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Zonixway | Kâhin Kontrol Paneli</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #0a0a0b; color: #ffd700; font-family: sans-serif; display: flex; justify-content: center; padding: 50px; }
+        .admin-box { background: #1a1a1d; padding: 30px; border-radius: 20px; border: 1px solid #ffd700; width: 100%; max-width: 600px; }
+        h1 { font-family: 'Cinzel', serif; text-align: center; }
+        textarea { width: 100%; height: 200px; background: #000; color: #fff; border: 1px solid #5d4037; padding: 15px; border-radius: 10px; margin: 15px 0; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; background: #000; border: 1px solid #5d4037; color: #fff; border-radius: 10px; }
+        button { width: 100%; padding: 15px; background: gold; color: #000; border: none; font-weight: bold; border-radius: 10px; cursor: pointer; }
+        #login-area { display: block; }
+        #panel-area { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="admin-box">
+    <h1>KÂHİN YÖNETİMİ</h1>
+
+    <div id="login-area">
+        <input type="password" id="passInput" placeholder="Yönetici Şifresi">
+        <button onclick="login()">Giriş Yap</button>
+    </div>
+
+    <div id="panel-area">
+        <label>Kâhin Karakteri (System Prompt):</label>
+        <textarea id="promptInput"></textarea>
+        
+        <label>Site Başlığı:</label>
+        <input type="text" id="titleInput">
+
+        <button onclick="updateSettings()">Ayarları Güncelle</button>
+        <p id="msg" style="color: lightgreen; text-align: center; margin-top: 10px;"></p>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://gosotcvviqelcubxhmpd.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdvc290Y3Z2aXFlbGN1YnhobXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NjA2NjEsImV4cCI6MjA4MzAzNjY2MX0.Ynf_ISL80PBa7osFTHR5puaq9jghFClXPDvRC2c0EZ0";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentSettingsId = null;
+
+    async function login() {
+        const pass = document.getElementById('passInput').value;
+        
+        let { data: settings } = await supabaseClient.from('settings').select('*').limit(1).single();
+
+        if (settings && settings.admin_password === pass) {
+            currentSettingsId = settings.id;
+            document.getElementById('login-area').style.display = 'none';
+            document.getElementById('panel-area').style.display = 'block';
+            
+            // Mevcut verileri çek
+            document.getElementById('promptInput').value = settings.system_prompt;
+            document.getElementById('titleInput').value = settings.site_title;
+        } else {
+            alert("Şifre yanlış kâhin efendi!");
+        }
+    }
+
+    async function updateSettings() {
+        const newPrompt = document.getElementById('promptInput').value;
+        const newTitle = document.getElementById('titleInput').value;
+
+        const { error } = await supabaseClient
+            .from('settings')
+            .update({ system_prompt: newPrompt, site_title: newTitle })
+            .eq('id', currentSettingsId);
+
+        if (!error) {
+            document.getElementById('msg').innerText = "Yıldızlar yeniden dizildi, ayarlar güncellendi!";
+            setTimeout(() => { document.getElementById('msg').innerText = ""; }, 3000);
+        } else {
+            alert("Bir hata oluştu.");
+        }
+    }
+</script>
+</body>
+</html>

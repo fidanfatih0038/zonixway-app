@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mystic Oracle - Fatih Elite</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8501135338572495" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #ffd700; --gold-dim: #b8860b; --purple: #9c27b0; --deep-bg: #0a0112; --glass: rgba(10, 5, 20, 0.85); --border: rgba(255, 215, 0, 0.3); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { background-color: var(--deep-bg); background-image: radial-gradient(circle at 50% 100%, #2a0a40, #000); color: #e0c3fc; font-family: 'Poppins', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; position: relative; }
+        #mystic-alert { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); background: var(--glass); border: 2px solid var(--gold); padding: 25px; border-radius: 20px; z-index: 99999; text-align: center; display: none; opacity: 0; box-shadow: 0 0 50px rgba(0,0,0,1), 0 0 20px var(--purple); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 85%; max-width: 320px; }
+        #mystic-alert.show { opacity: 1; transform: translate(-50%, -50%) scale(1); display: block; }
+        .alert-btn { margin-top: 20px; background: var(--gold); color: #000; border: none; padding: 10px 25px; border-radius: 15px; font-weight: bold; cursor: pointer; font-family: 'Cinzel'; }
+        .online-status { position: fixed; top: 20px; left: 20px; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(0, 255, 204, 0.3); font-size: 11px; color: #00ffcc; z-index: 1000; }
+        .online-dot { width: 8px; height: 8px; background: #00ffcc; border-radius: 50%; animation: blinkOnline 1.5s infinite; }
+        #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -3; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0; animation: twinkle ease-in-out infinite; }
+        #fog { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://raw.githubusercontent.com/s1mpson-/assets/master/fog.png') repeat; opacity: 0.05; z-index: -2; animation: fogMove 60s linear infinite; pointer-events: none; }
+        @keyframes fogMove { 0% { background-position: 0 0; } 100% { background-position: 1000px 0; } }
+        #welcome-overlay { position: fixed; inset: 0; background: var(--deep-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20000; transition: opacity 1s ease-out; }
+        .wizard-gif { font-size: 80px; filter: drop-shadow(0 0 20px var(--gold)); animation: wizardFloat 3s infinite ease-in-out; }
+        .container { width: 95%; max-width: 1100px; display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 30px; margin-bottom: 50px; z-index: 10; }
+        @media (min-width: 992px) { .container { grid-template-columns: 320px 1fr; } }
+        .panel { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 30px; position: relative; }
+        input, select, textarea { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; margin-top: 5px; }
+        .tab-btn { padding: 16px; text-align: left; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ddd; cursor: pointer; border-radius: 12px; margin-bottom: 10px; width: 100%; transition: 0.3s; }
+        .tab-btn.active { background: linear-gradient(90deg, #7b1fa2, transparent); border-left: 4px solid var(--gold); color: #fff; }
+        .grid-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .card-item { background: rgba(255,215,0,0.05); border: 1px solid var(--gold); color: var(--gold); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; font-size: 10px; }
+        .card-item.selected { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); }
+        .tarot-card { perspective: 1000px; height: 120px; cursor: pointer; }
+        .tarot-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .tarot-card.flipped .tarot-inner { transform: rotateY(180deg); }
+        .tarot-front, .tarot-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 10px; border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .tarot-back { background: linear-gradient(135deg, #1a0033, #4a0072); color: var(--gold); font-size: 20px; }
+        .tarot-front { background: rgba(123, 31, 162, 0.8); transform: rotateY(180deg); color: #fff; font-size: 9px; padding: 5px; text-align: center; }
+        .main-btn { background: linear-gradient(135deg, #4a0072, #7b1fa2); color: #fff; border: 1px solid var(--gold); padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; letter-spacing: 1px; font-family: 'Cinzel'; }
+        #sonucAlani { display: none; margin-top: 25px; padding: 25px; background: rgba(0,0,0,0.8); border-left: 4px solid var(--gold); border-radius: 16px; line-height: 1.7; color: #f0e6ff; text-align: justify; }
+        .image-box { margin-top: 15px; border: 2px dashed rgba(255, 215, 0, 0.3); border-radius: 16px; height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.2); cursor: pointer; }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; }
+        .planet-row { display: flex; justify-content: space-between; font-size: 11px; margin-top: 8px; padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .history-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 5px 0 15px 0; }
+        .history-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; width: 0; transition: width 1s; }
+        #surpriz-kutu { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent); border: 1px solid var(--gold); border-radius: 15px; padding: 15px; margin-top: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .side-icon { position: fixed; top: 50%; transform: translateY(-50%); width: 280px; opacity: 0.1; z-index: -1; pointer-events: none; filter: drop-shadow(0 0 10px var(--gold)); }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+    <div id="mystic-alert"><div id="alert-icon" style="font-size: 40px; margin-bottom: 10px;">🔮</div><div id="alert-text"></div><button class="alert-btn" onclick="closeAlert()">ANLADIM</button></div>
+    <div class="online-status"><div class="online-dot"></div><span>142 Çevrimiçi Kâhin</span></div>
+    <div id="welcome-overlay"><div class="wizard-gif">🧙✨</div><div style="text-align:center; color:gold; font-family:'Cinzel'; margin-top:20px;">Mystic Oracle'a Hoş Geldin<br><span style="font-size: 14px; opacity: 0.8;">Kaderin Yıldızlarda Saklı...</span></div></div>
+    <div id="star-container"></div><div id="fog"></div>
+    <audio id="bgMusic" loop><source src="https://actions.google.com/sounds/v1/horror/ambient_hum_creepy.ogg" type="audio/ogg"></audio>
+    <div id="mainAppContent" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <div class="header" style="text-align:center; margin-top:40px; position:relative;">
+            <div class="top-controls" style="position: absolute; right: -50px; top: -10px;"><button onclick="toggleMusic()" style="background:none; border:none; cursor:pointer; font-size:24px;">🎵</button></div>
+            <h1 id="siteMainTitle" style="font-family:'Cinzel'; font-size: clamp(24px, 8vw, 40px); color: gold; margin:0;">MYSTIC ORACLE</h1>
+            <div id="liveClock" style="font-size: 11px; color:gold; margin-top: 5px; opacity:0.7;"></div>
+        </div>
+        <div class="container">
+            <div class="panel">
+                <h3 style="color:gold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; margin-top:0;">👤 ANALİZ PROFİLİ</h3>
+                <label style="font-size:10px; color:gold; display:block; margin-top:15px; letter-spacing:1px;">İSMİNİZ *</label><input type="text" id="userName" placeholder="İsim Giriniz">
+                <label style="font-size:10px; color:gold; display:block; margin-top:15px; letter-spacing:1px;">DOĞUM TARİHİ *</label><input type="date" id="dob" onchange="calcAstro()">
+                <label style="font-size:10px; color:gold; display:block; margin-top:15px; letter-spacing:1px;">DURUMUNUZ *</label>
+                <select id="status"><option value="">Seçiniz...</option><option value="Bekar">Bekar</option><option value="Evli">Evli</option><option value="İlişkisi Var">İlişkisi Var</option></select>
+                <div id="surpriz-kutu" onclick="surprizAc()"><span id="kutu-ikon">🎁</span><div id="kutu-metin" style="font-size: 11px; color: #fff; font-style: italic;">Günün Kader Sandığını Aç...</div></div>
+                <div id="planet-monitor" style="margin-top:20px;"></div>
+                <div style="margin-top:20px;"><div style="font-size: 9px; color: var(--gold);">RUHSAL GÜÇ</div><div class="history-bar-container"><div id="bar-spirit" class="history-bar-fill"></div></div><div style="font-size: 9px; color: var(--gold);">AŞK ENERJİSİ</div><div class="history-bar-container"><div id="bar-love" class="history-bar-fill" style="background: #e91e63;"></div></div></div>
+                <div id="astroInfo" style="text-align:center; margin-top:15px; color:gold; font-weight:bold;"></div>
+                <div style="margin-top:25px;" id="menuContainer"></div>
+            </div>
+            <div class="panel">
+                <h2 id="t-active-title" style="margin-top:0; color:gold; font-family:'Cinzel'; text-align:center; font-size:18px;"></h2>
+                <div id="section-photo">
+                    <div class="image-box" id="imgPreview" onclick="document.getElementById('imgInput').click();">
+                        <span id="imgPlaceholder" style="opacity:0.5; font-size:12px;">Analiz İçin Fotoğraf Ekle</span>
+                    </div>
+                    <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="handleImage(this)">
+                </div>
+                <div id="section-grid" style="display:none;" class="grid-area"></div>
+                <div id="section-dream" style="display:none;"><textarea id="dreamData" rows="6" placeholder="Rüyanı detaylıca fısılda..."></textarea></div>
+                <button class="main-btn" onclick="runOracle()">KEHANETİ BAŞLAT</button>
+                <div id="loader" style="display:none; text-align:center; margin-top:20px; color:var(--gold); font-size:14px; font-weight:bold; animation: pulse 1s infinite;">✨ Kaderin Okunuyor...</div>
+                <div id="sonucAlani"><div id="sonucText"></div></div>
+            </div>
+        </div>
+    </div>
+<script>
+    let activeIdx = 0; let selectedBase64 = ""; let tarotStack = []; let zodiacSelected = "";
+    const menuItems = ["Kahve Falı", "El Falı", "Tarot", "Burçlar", "Rüyalar", "Numeroloji"];
+    const signs = ["Koç","Boğa","İkizler","Yengeç","Aslan","Başak","Terazi","Akrep","Yay","Oğlak","Kova","Balık"];
+    const tarotNames = ["Ölüm","Aşıklar","Kule","Yıldız","Ay","Güneş","Dünya","Adalet","Büyücü","Ermiş","Şeytan","Aptal"];
+    const surprizler = [{i:"🗝️", n:"Gümüş Anahtar", m:"Fırsat kapıda."}, {i:"🪶", n:"Anka Tüyü", m:"Ruhun yenileniyor."}];
+
+    function renderMenu() {
+        const container = document.getElementById('menuContainer'); container.innerHTML = '';
+        menuItems.forEach((name, i) => {
+            const b = document.createElement('button'); b.className = `tab-btn ${i===activeIdx?'active':''}`;
+            b.innerText = name; b.onclick = () => { 
+                activeIdx = i; tarotStack = []; zodiacSelected = "";
+                document.getElementById('sonucAlani').style.display = 'none'; renderMenu();
+                document.getElementById('t-active-title').innerText = name;
+                document.getElementById('section-photo').style.display = (i<2)?"block":"none";
+                document.getElementById('section-grid').style.display = (i===2||i===3)?"grid":"none";
+                document.getElementById('section-dream').style.display = (i===4)?"block":"none";
+                if(i===2) loadGrid('tarot'); if(i===3) loadGrid('signs');
+            };
+            container.appendChild(b);
+            if(i===activeIdx) document.getElementById('t-active-title').innerText = name;
+        });
+    }
+
+    function loadGrid(mode) {
+        const grid = document.getElementById('section-grid'); grid.innerHTML = '';
+        if(mode === 'signs') {
+            signs.forEach(s => {
+                const el = document.createElement('div'); el.className = 'card-item'; el.innerText = s;
+                el.onclick = () => { document.querySelectorAll('.card-item').forEach(x=>x.classList.remove('selected')); el.classList.add('selected'); zodiacSelected = s; };
+                grid.appendChild(el);
+            });
+        } else {
+            tarotNames.forEach((n, i) => {
+                const el = document.createElement('div'); el.className = 'tarot-card';
+                el.innerHTML = `<div class="tarot-inner"><div class="tarot-back">?</div><div class="tarot-front">${n}</div></div>`;
+                el.onclick = () => { if(tarotStack.length<3 && !el.classList.contains('flipped')) { el.classList.add('flipped'); tarotStack.push(n); } };
+                grid.appendChild(el);
+            });
+        }
+    }
+
+    async function runOracle() {
+        const n = document.getElementById('userName').value;
+        const s = document.getElementById('status').value;
+        const d = document.getElementById('dob').value;
+        const loader = document.getElementById('loader');
+
+        if(!n || !s || !d) { showMysticAlert("Lütfen tüm alanları doldurunuz."); return; }
+        
+        const birthDate = new Date(d);
+        const age = new Date().getFullYear() - birthDate.getFullYear();
+        if(age < 8 || age > 100) { showMysticAlert("Lütfen yaşınızı doğru giriniz (8-100)."); return; }
+
+        if(activeIdx < 2 && !selectedBase64) { showMysticAlert("Lütfen analiz için fotoğraf ekleyin."); return; }
+
+        loader.style.display = 'block'; document.getElementById('sonucAlani').style.display = 'none';
+
+        let promptText = "";
+        
+        if(activeIdx === 0) {
+            promptText = `Sen 40 yıllık tecrübeli, çok samimi, ağzı dualı, "canım, kuzum, evladım" diye konuşan tonton bir falcı teyzesin. Karşında "${n}" var, ${age} yaşında ve ${s}.
+
+FOTOĞRAF ANALİZİ: Gönderilen görselde fincan veya telve emaresi yoksa; "Bak hele yavrum, bu fincan değil ki! Teyzeni mi kandırıyorsun? Hadi güzelce fincanını çek de gel, bekliyorum kuzum." diyerek reddet.
+
+YORUM TARZI:
+- Kullanıcıya her zaman "${n} kuzum", "${n} evladım" gibi hitap et.
+- Aralara "Aman nazar değmesin", "Bak şuraya bir kuş konmuş", "Teyzen kurban olsun" gibi falcı teyze lafları serp.
+- Başlık kullanma, her şeyi bir bütün olarak, sohbet eder gibi anlat.
+- ASLA soru sorma ve falı "Allah gönlüne göre versin, hayırlı haberlerini bekliyorum" diyerek mühürle.`;
+
+        } else if(activeIdx === 1) {
+            promptText = `Sen mahallenin o meşhur, herkesin eline bakıp her şeyi bilen falcı teyzesisin. Karşında "${n}" var, ${age} yaşında ve ${s}.
+
+GÖRSEL ANALİZ: Görsel bir el değilse; "Aman evladım bu senin elin değil ki! Avucunun içini teyzene bir göster hele, kaderini okuyayım." de.
+
+YORUM TARZI:
+- "Bak bu çizgi ne diyor biliyor musun kuzum?", "Ay maşallah ne güzel bir el bu" gibi teyze cümleleri kur.
+- "${n}" ismiyle konuş, çizgileri hayatla samimi bir şekilde bağla.
+- Akıcı ve tek parça bir metin yaz.
+- ASLA soru sorma ve falı bilgece bir dua ile bitir.`;
+
+        } else if(activeIdx === 2) {
+            promptText = `Sen bilge bir falcı teyzesin. "${n}" ${age} yaşında ${s} için seçilen ${tarotStack.join(', ')} kartlarını; samimi, teyze edasıyla ve tek bir akıcı hikayede yorumla. Soru sorma.`;
+        } else if(activeIdx === 3) {
+            promptText = `Sen yıldızlardan anlayan o bilge teyzesin. "${n}" ${age} yaşında ${s} için ${zodiacSelected} burcunun yorumunu samimi bir dille, "evladım" diyerek yap. Soru sorma.`;
+        } else if(activeIdx === 4) {
+            const dream = document.getElementById('dreamData').value;
+            promptText = `Sen rüya tabircisi bilge bir teyzesin. "${n}" ${age} yaşında ${s} kişinin rüyası: "${dream}". Rüyayı hayatıyla bağlayarak samimi bir dille yorumla. Soru sorma.`;
+        } else if(activeIdx === 5) {
+            promptText = `Sen sayıların dilinden anlayan o mahalle teyzesisin. "${n}" için yaşam sayısını ve kaderini samimi bir dille anlat. Soru sorma.`;
+        }
+
+        try {
+            const res = await fetch("https://text.pollinations.ai/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: [
+                        { role: "user", content: [
+                            { type: "text", text: promptText },
+                            (selectedBase64 && activeIdx < 2 ? { type: "image_url", image_url: { url: selectedBase64 } } : null)
+                        ].filter(x => x) }
+                    ],
+                    model: "openai",
+                    seed: Math.floor(Math.random()*9999)
+                })
+            });
+
+            const text = await res.text();
+            loader.style.display = 'none';
+            document.getElementById('sonucText').innerText = text.trim();
+            document.getElementById('sonucAlani').style.display = 'block';
+            updateEnergyBars();
+        } catch (e) { 
+            loader.style.display = 'none';
+            showMysticAlert("Kozmik bağ koptu, lütfen tekrar deneyin."); 
+        }
+    }
+
+    function handleImage(i) {
+        if(i.files[0]){
+            const r = new FileReader();
+            r.onload=(e)=>{
+                document.getElementById('imgPreview').innerHTML=`<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                selectedBase64 = e.target.result;
+            };
+            r.readAsDataURL(i.files[0]);
+        }
+    }
+
+    function surprizAc() {
+        const name = document.getElementById('userName').value; if(!name) { showMysticAlert("İsmini yazmalısın."); return; }
+        const key = `surpriz_${name.toLowerCase()}_${new Date().toLocaleDateString()}`;
+        if(localStorage.getItem(key)) { showMysticAlert("Sandığını bugün zaten açtın."); return; }
+        const secilen = surprizler[Math.floor(Math.random() * surprizler.length)];
+        document.getElementById('kutu-ikon').innerHTML = secilen.i;
+        document.getElementById('kutu-metin').innerHTML = `<b>${secilen.n}</b>: ${secilen.m}`;
+        localStorage.setItem(key, "1");
+    }
+
+    function showMysticAlert(t) { document.getElementById('alert-text').innerText = t; const b = document.getElementById('mystic-alert'); b.style.display="block"; setTimeout(()=>b.classList.add('show'),10); }
+    function closeAlert() { document.getElementById('mystic-alert').classList.remove('show'); setTimeout(()=>document.getElementById('mystic-alert').style.display="none",300); }
+    function syncPlanets() { const p=[{n:"Merkür",v:72},{n:"Venüs",v:45},{n:"Mars",v:88},{n:"Jüpiter",v:94}]; document.getElementById('planet-monitor').innerHTML=p.map(x=>`<div class="planet-row"><span>${x.n}</span><span style="color:gold">%${x.v}</span></div>`).join(''); }
+    function updateEnergyBars() { document.getElementById('bar-spirit').style.width=(Math.floor(Math.random()*40)+60)+"%"; document.getElementById('bar-love').style.width=(Math.floor(Math.random()*40)+50)+"%"; }
+    function toggleMusic() { const m=document.getElementById('bgMusic'); m.paused?m.play():m.pause(); }
+    function calcAstro() { const d=document.getElementById('dob').value; if(!d)return; document.getElementById('astroInfo').innerText="Burcunuz: "+signs[new Date(d).getMonth()]; }
+
+    window.onload = () => {
+        syncPlanets(); updateEnergyBars(); renderMenu();
+        const sc=document.getElementById('star-container');
+        for(let i=0; i<60; i++){const s=document.createElement('div'); s.className='star'; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%'; s.style.width='2px'; s.style.height='2px'; s.style.animationDuration=(Math.random()*3+2)+'s'; sc.appendChild(s);}
+        setTimeout(()=>{const o=document.getElementById('welcome-overlay'); if(o){o.style.opacity='0'; setTimeout(()=>o.remove(),800);}},1500);
+        setInterval(()=>{document.getElementById('liveClock').innerText=new Date().toLocaleString('tr-TR');},1000);
+    };
+</script>
+</body>
+</html>
