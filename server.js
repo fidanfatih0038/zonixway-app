@@ -1,6 +1,3 @@
-İşte profesyonel ve gerçekçi falcı versiyonu! Her fal tipinde 40 yıllık ustanın bilgeliğini yansıtacak şekilde güncelledim:
-
-```javascript
 cat << 'EOF' > server.js
 const express = require('express');
 const https = require('https');
