@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mystic Oracle v4.0 Final</title> 
+    <title>Mystic Oracle</title> 
     <link rel="icon" href="data:,">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8501135338572495" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;500;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
@@ -54,7 +54,6 @@
         .main-btn { background: linear-gradient(135deg, #4a0072, #7b1fa2); color: #fff; border: 1px solid var(--gold); padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; letter-spacing: 1px; font-family: 'Cinzel'; transition: 0.3s; }
         .main-btn:active { transform: scale(0.98); }
 
-        /* YENİ KAĞIT EFEKTİ STİLLERİ */
         #sonucAlani { 
             display: none; 
             margin-top: 25px; 
@@ -150,7 +149,7 @@
             <div class="top-controls" style="position: absolute; right: -50px; top: -10px;">
                 <button onclick="toggleMusic()" style="background:none; border:none; cursor:pointer; font-size:24px;">🎵</button>
             </div>
-            <h1 style="font-family:'Cinzel'; font-size: clamp(24px, 8vw, 40px); color: gold; margin:0;">MYSTIC ORACLE <span style="font-size:12px; color:white;">v4.0 Final</span></h1>
+            <h1 style="font-family:'Cinzel'; font-size: clamp(24px, 8vw, 40px); color: gold; margin:0;">MYSTIC ORACLE</h1>
             <div id="liveClock" style="font-size: 11px; color:gold; margin-top: 5px; opacity:0.7;"></div>
         </div>
 
@@ -323,28 +322,18 @@
         document.getElementById('loader').style.display = 'block'; 
         document.getElementById('sonucAlani').style.display = 'none';
 
-        let identity = "Sen bilge ve samimi bir Falcı Teyzesin.";
-        let guardrail = "";
-
-        if(activeIdx === 0) {
-            guardrail = "ÖNEMLİ: Sana gönderilen görselleri analiz et. Eğer görseller KAHVE FİNCANI veya TABANINA ait değilse kesinlikle yorum yapma ve sadece şunu söyle: 'Hata: Lütfen geçerli bir kahve fincanı fotoğrafı yükleyiniz.'";
-        } else if(activeIdx === 1) {
-            guardrail = "ÖNEMLİ: Sana gönderilen görselleri analiz et. Eğer görseller bir İNSAN AVUÇ İÇİNE ait değilse kesinlikle yorum yapma ve sadece şunu söyle: 'Hata: Lütfen geçerli bir el falı fotoğrafı yükleyiniz.'";
-        }
-
         let task = `Kullanıcı: ${n}, Yaş: ${age}. Kategori: ${menuItems[activeIdx]}. `;
         if(activeIdx === 2) task += `Seçilen Tarot Kartları: ${tarotStack.join(', ')}. `;
         if(activeIdx === 3) task += `Burç: ${zodiacSelected}. `;
         if(activeIdx === 4) task += `Rüya: ${document.getElementById('dreamData').value}. `;
 
-        const fullPrompt = `${identity}\n${guardrail}\n${task}\nLütfen samimi, detaylı ve akıcı bir yorum yap.`;
-
         try {
-            const response = await fetch("https://zonixway.com/api/chat", {
+            const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    message: fullPrompt,
+                    message: task,
+                    name: n,
                     images: (activeIdx < 2) ? selectedImages : []
                 })
             });
@@ -366,11 +355,30 @@
     }
     
     function surprizAc() { 
-        const n=document.getElementById('userName').value; 
-        if(!n){showMysticAlert("İsmini söyle.");return;} 
-        const s=surprizler[Math.floor(Math.random()*surprizler.length)]; 
-        document.getElementById('kutu-ikon').innerHTML=s.i; 
-        document.getElementById('kutu-metin').innerHTML=`<b>${s.n}</b>: ${s.m}`; 
+        const n = document.getElementById('userName').value; 
+        if(!n){ showMysticAlert("Önce ismini söylemelisin."); return; } 
+
+        const bugun = new Date().toLocaleDateString();
+        const sonAcilma = localStorage.getItem('sandik_tarihi');
+
+        if (sonAcilma === bugun) {
+            showMysticAlert("Günün Kader Sandığı'nı zaten açtın. Yeni sırlar için yarını bekle!");
+            return;
+        }
+
+        // Backend'deki zengin içerikli API'yi çağırıyoruz
+        fetch('/api/chest')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('kutu-ikon').innerHTML = "✨"; 
+                document.getElementById('kutu-metin').innerHTML = `<b>Kaderin Fısıltısı:</b><br>${data.text}`; 
+                localStorage.setItem('sandik_tarihi', bugun);
+            })
+            .catch(() => {
+                const s = surprizler[Math.floor(Math.random()*surprizler.length)]; 
+                document.getElementById('kutu-ikon').innerHTML = s.i; 
+                document.getElementById('kutu-metin').innerHTML = `<b>${s.n}</b>: ${s.m}`; 
+            });
     }
 
     function showMysticAlert(t) { 
